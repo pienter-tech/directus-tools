@@ -17,13 +17,15 @@ class DirectusUpgrader
     public $git = false;
     /** @var bool */
     public $dotenv = false;
+    /** @var bool */
+    public $customComposer = false;
     /** @var string */
     public $root;
 
     public function __construct() {
         $this->cmd = new Command();
         $this->setOptions();
-        $this->verbose = $this->cmd['verbose'] ;
+        $this->verbose = $this->cmd['verbose'];
         $this->root = $this->cmd['root'];
         $this->git = $this->cmd['git'] || $this->cmd['all'];
         $this->dotenv = $this->cmd['env'] || $this->cmd['all'];
@@ -42,12 +44,48 @@ class DirectusUpgrader
         if ($this->dotenv) {
             $this->addDotenv();
         }
+        if ($this->customComposer) {
+            $this->mergeCustomComposer();
+        }
         if ($this->git) {
             $this->addToGit();
         }
         $this->info();
     }
 
+    /**
+     * @return bool
+     */
+    private function mergeCustomComposer() {
+        if (!is_file("{$this->root}/composer.json")) {
+            $this->log('composer.json not found', 'alert');
+            return false;
+        }
+
+        if (!is_file("{$this->root}/composer.custom.json")) {
+            $this->log('composer.custom.json not found, create now? (y/n)', 'alert');
+            $yOrN = strtolower(trim(fgets(STDIN)));
+            if ($yOrN === 'y' || $yOrN === 'yes') {
+                $this->log('Creating composer.custom.json for you', 'info');
+                $newCustomComposer = fopen("{$this->root}/composer.custom.json", 'w') or die('Could not create composer.custom.json');
+                $newContent = "{}\n";
+                fwrite($newCustomComposer, $newContent);
+                fclose($newCustomComposer);
+            }
+            return false;
+        }
+
+        $composerJson = json_decode(file_get_contents("{$this->root}/composer.json"), true);
+        $customComposerJson = json_decode(file_get_contents("{$this->root}/composer.custom.json"), true);
+        $newComposerJson = array_merge_recursive($composerJson, $customComposerJson);
+        file_put_contents("{$this->root}/composer.json", str_replace("\\", "\\\\", stripslashes(json_encode($newComposerJson, JSON_PRETTY_PRINT))));
+        $this->log('Merged composer.custom.json', 'info');
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
     private function addDotenv() {
         if (!is_file("{$this->root}/src/web.php")) {
             $this->log('Web.php file not found', 'alert');
@@ -68,7 +106,8 @@ class DirectusUpgrader
         $dotenvLines = ['$dotenv = Dotenv\Dotenv::create($basePath);', '$dotenv->load();'];
         array_splice($webContent, $autoloadLine + 1, 0, $dotenvLines);
         file_put_contents("{$this->root}/src/web.php", join("\n", $webContent));
-
+        $this->log('Enabled dotenv', 'info');
+        return true;
     }
 
     private function checkGitignore() {
@@ -113,12 +152,14 @@ class DirectusUpgrader
             $this->log('Delete upgrade_directus folder');
             system('rm -rf ' . $this->root . '/upgrade_directus/');
         }
+        $this->log('Removed composer.bckp.json and upgrade_directus/', 'info');
     }
 
     private function clone() {
         $this->log('Clone repo');
         $quiet = $this->verbose ? '' : '-q';
         system("git clone {$quiet} https://github.com/directus/directus.git {$this->root}/upgrade_directus");
+        $this->log('Cloned repo', 'info');
     }
 
     private function cloneClean() {
@@ -134,19 +175,22 @@ class DirectusUpgrader
         system('rm ' . $this->root . '/upgrade_directus/.gitignore');
         system('rm ' . $this->root . '/upgrade_directus/LICENSE.md');
         system('rm ' . $this->root . '/upgrade_directus/README.md');
+        $this->log('Deleted files from upgrade_directus', 'info');
     }
 
     private function backupComposer() {
         system("mv {$this->root}/composer.json {$this->root}/composer.bckp.json");
+        $this->log('Created composer.bckp.json', 'info');
     }
 
     private function moveNewDirectus() {
         system("cp -a {$this->root}/upgrade_directus/. {$this->root}/");
+        $this->log('Overwritten directus source', 'info');
     }
 
     private function addToGit() {
         system("git --git-dir {$this->root}/.git add .");
-        $this->log('Added new files to git');
+        $this->log('Added new files to git', 'info');
     }
 
     public function log($string, $type = 'normal') {

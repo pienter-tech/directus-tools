@@ -18,6 +18,7 @@ class DirectusUpgrader
 
     public function __construct() {
         $this->cmd = new Command();
+        $this->setOptions();
         $this->verbose = $this->cmd['verbose'];
         $this->root = $this->cmd['root'];
     }

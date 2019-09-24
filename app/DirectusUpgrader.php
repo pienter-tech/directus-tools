@@ -32,7 +32,6 @@ class DirectusUpgrader
         $this->cloneClean();
         $this->backupComposer();
         $this->moveNewDirectus();
-        $this->repoClean();
         $this->addToGit();
         $this->info();
     }
@@ -78,7 +77,7 @@ class DirectusUpgrader
     }
 
     private function moveNewDirectus() {
-        system("cp -r {$this->root}/upgrade_directus/ {$this->root}/");
+        system("cp -a {$this->root}/upgrade_directus/. {$this->root}/");
     }
 
     private function addToGit() {

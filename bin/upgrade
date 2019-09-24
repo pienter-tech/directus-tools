@@ -1,0 +1,11 @@
+<?php
+use App\DirectusUpgrader;
+
+require_once '../vendor/autoload.php';
+
+$app = new DirectusUpgrader();
+
+$app->echo($app->verbose);
+$app->echo($app->root, 'alert');
+
+

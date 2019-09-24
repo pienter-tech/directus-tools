@@ -1,0 +1,23 @@
+{
+    "name": "pienter/directus-upgrader",
+    "description": "Upgrade directus",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Korneel Eeckhout",
+            "email": "korneel@pienter.tech"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {
+        "nategood/commando": "*",
+        "codedungeon/php-cli-colors": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "bin": ["bin/upgrade"]
+}

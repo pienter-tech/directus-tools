@@ -118,14 +118,8 @@ class DirectusUpgrader
 
         $this->cmd->option('r')
             ->aka('root')
-            ->describedAs('Set root (if empty working directory will be used')
-            ->map(function($value){
-                if ($value) {
-                    return rtrim($value, '/');
-                } else {
-                    return getcwd();
-                }
-            });
+            ->describedAs('Set root (if empty current working directory will be used')
+            ->defaultsTo(getcwd());
 
         $this->cmd->option('g')
             ->aka('git')

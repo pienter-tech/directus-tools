@@ -14,7 +14,4 @@ if (!$autoloader()) {
 
 $app = new DirectusUpgrader\DirectusUpgrader();
 
-$app->log($app->verbose ? 'verbose on' : 'verbose off');
-$app->log($app->root, 'alert');
-
 $app->run();

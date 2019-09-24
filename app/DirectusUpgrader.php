@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App;
+namespace DirectusUpgrader;
 
 
 use Codedungeon\PHPCliColors\Color;

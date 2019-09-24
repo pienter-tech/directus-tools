@@ -7,5 +7,6 @@ $app = new DirectusUpgrader();
 
 $app->echo($app->verbose);
 $app->echo($app->root, 'alert');
+$app->echo('test');
 
 

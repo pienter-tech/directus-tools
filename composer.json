@@ -9,7 +9,7 @@
             "email": "korneel@pienter.tech"
         }
     ],
-    "minimum-stability": "beta",
+    "minimum-stability": "stable",
     "require": {
         "nategood/commando": "*",
         "codedungeon/php-cli-colors": "~1.0"

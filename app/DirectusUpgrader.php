@@ -15,25 +15,92 @@ class DirectusUpgrader
     public $verbose = false;
     /** @var bool */
     public $git = false;
+    /** @var bool */
+    public $dotenv = false;
     /** @var string */
     public $root;
 
     public function __construct() {
         $this->cmd = new Command();
         $this->setOptions();
-        $this->verbose = $this->cmd['verbose'];
+        $this->verbose = $this->cmd['verbose'] ;
         $this->root = $this->cmd['root'];
-        $this->git = $this->cmd['git'];
+        $this->git = $this->cmd['git'] || $this->cmd['all'];
+        $this->dotenv = $this->cmd['env'] || $this->cmd['all'];
+        $this->customComposer = $this->cmd['composer'] || $this->cmd['all'];
     }
 
     public function run() {
+        if ($this->git) {
+            $this->checkGitignore();
+        }
         $this->repoClean();
         $this->clone();
         $this->cloneClean();
         $this->backupComposer();
         $this->moveNewDirectus();
-        $this->addToGit();
+        if ($this->dotenv) {
+            $this->addDotenv();
+        }
+        if ($this->git) {
+            $this->addToGit();
+        }
         $this->info();
+    }
+
+    private function addDotenv() {
+        if (!is_file("{$this->root}/src/web.php")) {
+            $this->log('Web.php file not found', 'alert');
+            return false;
+        }
+
+        $webContent = file("{$this->root}/src/web.php", FILE_IGNORE_NEW_LINES);
+        $dotenvLine = Helpers::fuzzyArraySearch("Dotenv::create(\$basePath)", $webContent);
+        if ($dotenvLine !== false) {
+            $this->log('Dotenv already loaded', 'alert');
+            return false;
+        }
+        $autoloadLine = Helpers::fuzzyArraySearch("require \$basePath . '/vendor/autoload.php'", $webContent);
+        if ($autoloadLine === false) {
+            $this->log('Autoload line not found', 'alert');
+            return false;
+        }
+        $dotenvLines = ['$dotenv = Dotenv\Dotenv::create($basePath);', '$dotenv->load();'];
+        array_splice($webContent, $autoloadLine + 1, 0, $dotenvLines);
+        file_put_contents("{$this->root}/src/web.php", join("\n", $webContent));
+
+    }
+
+    private function checkGitignore() {
+        if (!is_file("{$this->root}/.gitignore")) {
+            $this->log('No .gitignore file found, create one? (y/n)', 'alert');
+            $yOrN = strtolower(trim(fgets(STDIN)));
+            if ($yOrN === 'y' || $yOrN === 'yes') {
+                $this->log('Creating .gitignore file for you', 'info');
+                $newGitignore = fopen("{$this->root}/.gitignore", 'w') or die('Could not create .gitignore');
+                $newContent = "# Created by directus-upgrade script\nupgrade_directus\ncomposer.bckp.json";
+                fwrite($newGitignore, $newContent);
+                fclose($newGitignore);
+            }
+        }
+
+        $gitignoreContent = file("{$this->root}/.gitignore", FILE_IGNORE_NEW_LINES);
+        $upgradeDirectusIncluded = array_search('upgrade_directus', $gitignoreContent);
+        $composerBckpIncluded = array_search('composer.bckp.json', $gitignoreContent);
+        if ($upgradeDirectusIncluded === false || $composerBckpIncluded === false) {
+            $this->log('Update .gitignore file? (y/n)', 'alert');
+            $yOrN = strtolower(trim(fgets(STDIN)));
+            if ($yOrN === 'y' || $yOrN === 'yes') {
+                array_push($gitignoreContent, '# Added by directus-upgrade script');
+                if ($upgradeDirectusIncluded === false) {
+                    array_push($gitignoreContent, 'upgrade_directus');
+                }
+                if ($composerBckpIncluded === false) {
+                    array_push($gitignoreContent, 'composer.bckp.json');
+                }
+                file_put_contents("{$this->root}/.gitignore", join("\n", $gitignoreContent));
+            }
+        }
     }
 
     private function repoClean() {
@@ -52,9 +119,6 @@ class DirectusUpgrader
         $this->log('Clone repo');
         $quiet = $this->verbose ? '' : '-q';
         system("git clone {$quiet} https://github.com/directus/directus.git {$this->root}/upgrade_directus");
-//        $tags = [];
-//        exec('git ls-remote --tags https://github.com/directus/directus.git', $tags);
-//        print_r($tags);
     }
 
     private function cloneClean() {
@@ -81,16 +145,14 @@ class DirectusUpgrader
     }
 
     private function addToGit() {
-        if($this->git) {
-            system("git --git-dir {$this->root}/.git add .");
-            $this->log('Added new files to git');
-        }
+        system("git --git-dir {$this->root}/.git add .");
+        $this->log('Added new files to git');
     }
 
     public function log($string, $type = 'normal') {
         switch ($type) {
             case 'normal':
-                if($this->verbose){
+                if ($this->verbose) {
                     echo Color::white() . $string . Color::reset() . PHP_EOL;
                 }
                 break;
@@ -98,7 +160,7 @@ class DirectusUpgrader
                 echo Color::red() . $string . Color::reset() . PHP_EOL;
                 break;
             case 'info':
-                echo Color::bold_blue() . $string . Color::reset() . PHP_EOL;
+                echo Color::cyan() . $string . Color::reset() . PHP_EOL;
                 break;
         }
     }
@@ -123,6 +185,23 @@ class DirectusUpgrader
         $this->cmd->option('g')
             ->aka('git')
             ->describedAs('Add new files to git')
+            ->boolean();
+
+        $this->cmd->option('e')
+            ->aka('env')
+            ->aka('dotenv')
+            ->describedAs('Update web.php file and load Dotenv\Dotenv (add Dotenv\Dorenv to composer.json or composer.custom.json)')
+            ->boolean();
+
+        $this->cmd->option('c')
+            ->aka('composer')
+            ->aka('custom_composer')
+            ->describedAs('Merge composer.custom.json into composer.json')
+            ->boolean();
+
+        $this->cmd->option('a')
+            ->aka('all')
+            ->describedAs('Alias for -g -e -c')
             ->boolean();
     }
 }

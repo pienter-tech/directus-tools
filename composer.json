@@ -9,7 +9,7 @@
             "email": "korneel@pienter.tech"
         }
     ],
-    "version": "v1.0.2",
+    "version": "v1.0.3",
     "minimum-stability": "stable",
     "require": {
         "league/climate": "^3.5",

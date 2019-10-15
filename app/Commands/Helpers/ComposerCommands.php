@@ -6,15 +6,16 @@ use DirectusTools\Exceptions\FileException;
 use DirectusTools\Exceptions\RunException;
 use League\CLImate\CLImate;
 
+/**
+ * Trait ComposerCommands
+ * @package DirectusTools\Commands\Helpers
+ *
+ * @property string $root
+ * @property CLImate $cli
+ * @property bool $quiet
+ */
 trait ComposerCommands
 {
-    /** @var string */
-    private $root;
-    /** @var CLImate */
-    private $cli;
-    /** @var bool */
-    private $quiet;
-
     /**
      * @return bool
      * @throws RunException

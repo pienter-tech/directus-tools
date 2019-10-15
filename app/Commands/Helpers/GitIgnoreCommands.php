@@ -5,6 +5,14 @@ namespace DirectusTools\Commands\Helpers;
 use DirectusTools\Exceptions\FileException;
 use League\CLImate\CLImate;
 
+/**
+ * Trait GitIgnoreCommands
+ * @package DirectusTools\Commands\Helpers
+ *
+ * @property string $root
+ * @property CLImate $cli
+ * @property bool $quiet
+ */
 trait GitIgnoreCommands
 {
     /** @var string */

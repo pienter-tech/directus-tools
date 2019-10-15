@@ -5,16 +5,17 @@ namespace DirectusTools\Commands\Helpers;
 use DirectusTools\Exceptions\RunException;
 use League\CLImate\CLImate;
 
+/**
+ * Trait DotEnvCommands
+ * @package DirectusTools\Commands\Helpers
+ *
+ * @property string $root
+ * @property CLImate $cli
+ * @property int $autoLoadLine
+ */
 trait DotEnvCommands
 {
     use FuzzyArraySearchCommands;
-
-    /** @var string */
-    private $root;
-    /** @var CLImate */
-    private $cli;
-    /** @var int */
-    private $autoLoadLine;
 
     /**
      * @return bool

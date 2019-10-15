@@ -4,15 +4,16 @@ namespace DirectusTools\Commands\Helpers;
 
 use League\CLImate\CLImate;
 
+/**
+ * Trait CloneCommands
+ * @package DirectusTools\Commands\Helpers
+ *
+ * @property string $root
+ * @property CLImate $cli
+ * @property string $cloneFolder
+ */
 trait CloneCommands
 {
-    /** @var CLImate */
-    private $cli;
-    /** @var string */
-    private $root;
-    /** @var string */
-    private $cloneFolder;
-
     /**
      * @param string $cloneFolder
      * @param bool $firstTime

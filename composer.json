@@ -1,6 +1,6 @@
 {
-    "name": "pienter/directus-upgrader",
-    "description": "Upgrade directus",
+    "name": "pienter/directus-tools",
+    "description": "Directus Tools",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,12 +13,22 @@
     "minimum-stability": "stable",
     "require": {
         "nategood/commando": "*",
-        "codedungeon/php-cli-colors": "~1.0"
+        "codedungeon/php-cli-colors": "~1.0",
+        "league/climate": "^3.5",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.5.0",
+        "phpmd/phpmd": "2.7.0",
+        "escapestudios/symfony2-coding-standard": "3.x-dev"
     },
     "autoload": {
         "psr-4": {
-            "DirectusUpgrader\\": "app/"
+            "DirectusTools\\": "app/"
         }
     },
-    "bin": ["bin/upgrade"]
+    "scripts": {
+        "style": "phpcs --standard=PSR2"
+    },
+    "bin": ["bin/directus-tools"]
 }

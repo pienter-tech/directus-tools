@@ -2,6 +2,8 @@
 
 <?php
 
+use DirectusTools\Main;
+
 $autoloader = require __DIR__ . '/../app/composer_autoloader.php';
 
 if (!$autoloader()) {
@@ -12,6 +14,6 @@ if (!$autoloader()) {
     );
 }
 
-$app = new DirectusUpgrader\DirectusUpgrader();
+$app = new Main();
 
 $app->run();

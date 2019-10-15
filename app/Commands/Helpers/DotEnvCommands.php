@@ -15,7 +15,7 @@ use League\CLImate\CLImate;
  */
 trait DotEnvCommands
 {
-    use FuzzyArraySearchCommands;
+    use FuzzyArraySearchCommand;
 
     /**
      * @return bool

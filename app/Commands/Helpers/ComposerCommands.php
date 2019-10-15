@@ -16,6 +16,7 @@ use League\CLImate\CLImate;
  */
 trait ComposerCommands
 {
+    use ArrayMergeRecursiveDistinct;
     /**
      * @return bool
      * @throws RunException
@@ -26,7 +27,7 @@ trait ComposerCommands
         if ($this->checkComposer() && $this->checkCustomComposer()) {
             $composerJson = json_decode(file_get_contents("{$this->root}/composer.json"), true);
             $customComposerJson = json_decode(file_get_contents("{$this->root}/composer.custom.json"), true);
-            $newComposerJson = array_merge_recursive($composerJson, $customComposerJson);
+            $newComposerJson = $this->arrayMergeRecursiveDistinct($composerJson, $customComposerJson);
             $this->writeJson("{$this->root}/composer.json", $newComposerJson);
             $this->cli->info('Merged composer.custom.json');
         }

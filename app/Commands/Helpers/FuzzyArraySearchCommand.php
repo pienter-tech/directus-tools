@@ -2,7 +2,7 @@
 
 namespace DirectusTools\Commands\Helpers;
 
-trait FuzzyArraySearchCommands
+trait FuzzyArraySearchCommand
 {
     /**
      * @param string $needle

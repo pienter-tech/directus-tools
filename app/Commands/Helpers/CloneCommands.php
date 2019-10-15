@@ -23,7 +23,8 @@ trait CloneCommands
     {
         $this->cloneFolder = $cloneFolder;
 
-        return $this->clearCloneFolder() && $this->cloneLatestDirectus() && $this->cleanCloneFolder($firstTime) && $this->overwriteDirectus();
+        $this->clearCloneFolder($firstTime);
+        return $this->cloneLatestDirectus() && $this->cleanCloneFolder($firstTime) && $this->overwriteDirectus();
     }
 
     /**
@@ -38,14 +39,18 @@ trait CloneCommands
     }
 
     /**
+     * @param bool $firstTime
      * @return bool
      */
-    private function clearCloneFolder()
+    private function clearCloneFolder($firstTime)
     {
-        if (!is_dir($this->cloneFolder)) {
+        if ($firstTime || !is_dir($this->cloneFolder)) {
             return false;
         }
-        $this->cli->info('Delete upgrade_directus folder');
+        $removeUpgradeFolder = $this->quiet || $this->cli->confirm("Remove {$this->cloneFolder}?")->confirmed();
+        if (!$removeUpgradeFolder) {
+            return true;
+        }
         system("rm -rf {$this->cloneFolder}");
         $this->cli->info("Removed {$this->cloneFolder}");
         return true;

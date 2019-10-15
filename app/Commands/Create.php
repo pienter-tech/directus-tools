@@ -60,7 +60,7 @@ class Create extends CommandClass
      */
     public function setArguments($arguments)
     {
-        $this->name = empty($arguments->get('name')) ? $arguments->get('name') : 'new-directus-project';
+        $this->name = empty($arguments->get('name')) ? 'new-directus-project' : $arguments->get('name');
         if (empty($arguments->get('root'))) {
             $this->root = getcwd() . "/" . $this->name;
         } else {
@@ -90,6 +90,7 @@ class Create extends CommandClass
         }
 
         $this->createCustomComposer($customComposerContent);
+        $this->mergeCustomComposer();
 
         $this->info();
     }

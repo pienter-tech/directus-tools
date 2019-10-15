@@ -15,13 +15,6 @@ use League\CLImate\CLImate;
  */
 trait GitIgnoreCommands
 {
-    /** @var string */
-    private $root;
-    /** @var CLImate */
-    private $cli;
-    /** @var bool */
-    private $quiet;
-
     /**
      * @throws FileException
      */

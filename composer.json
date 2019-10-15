@@ -9,19 +9,13 @@
             "email": "korneel@pienter.tech"
         }
     ],
-    "version": "v1.0.0",
+    "version": "v1.0.1",
     "minimum-stability": "stable",
     "require": {
-        "nategood/commando": "*",
-        "codedungeon/php-cli-colors": "~1.0",
         "league/climate": "^3.5",
         "ext-json": "*"
     },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "3.5.0",
-        "phpmd/phpmd": "2.7.0",
-        "escapestudios/symfony2-coding-standard": "3.x-dev"
-    },
+    "require-dev": {},
     "autoload": {
         "psr-4": {
             "DirectusTools\\": "app/"

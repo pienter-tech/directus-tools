@@ -21,7 +21,7 @@ trait FuzzyArraySearchCommand
                     }
                 }
                 if($allNeedlesFound) {
-                    return index;
+                    return $index;
                 }
             } else {
                 if (strpos($hay, $needle) !== false) {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94c8152cba8857dcd9dfb26552bcd968",
+    "content-hash": "412399883dd39388bd80cba9726dd93b",
     "packages": [
         {
             "name": "league/climate",

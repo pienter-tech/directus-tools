@@ -17,24 +17,34 @@ trait DotEnvCommands
 {
     use FuzzyArraySearchCommand;
 
+    private $files = [
+        '/src/web.php',
+        '/bin/directus',
+        '/public/downloads/index.php',
+        '/public/thumbnail/index.php'
+    ];
+
     /**
      * @return bool
      * @throws RunException
      */
     private function addDotenv()
     {
-        if (!is_file("{$this->root}/src/web.php")) {
-            throw new RunException('web.php not found, project is not correctly setup');
+        foreach($this->files as $file) {
+            if (!is_file("{$this->root}$file")) {
+                throw new RunException("$file not found, project is not correctly setup");
+            }
+
+            $webContent = file("{$this->root}$file", FILE_IGNORE_NEW_LINES);
+            if (!($this->hasExistingDotenv($webContent) && $this->hasAutoloadLine($webContent))) {
+                return false;
+            }
+            $dotEnvLines = ['$dotenv = Dotenv\Dotenv::create($basePath);', '$dotenv->load();'];
+            array_splice($webContent, $this->autoLoadLine + 1, 0, $dotEnvLines);
+            file_put_contents("{$this->root}$file", join("\n", $webContent));
+            $this->cli->info("Enabled dotenv in $file");
         }
 
-        $webContent = file("{$this->root}/src/web.php", FILE_IGNORE_NEW_LINES);
-        if (!($this->hasExistingDotenv($webContent) && $this->hasAutoloadLine($webContent))) {
-            return false;
-        }
-        $dotEnvLines = ['$dotenv = Dotenv\Dotenv::create($basePath);', '$dotenv->load();'];
-        array_splice($webContent, $this->autoLoadLine + 1, 0, $dotEnvLines);
-        file_put_contents("{$this->root}/src/web.php", join("\n", $webContent));
-        $this->cli->info('Enabled dotenv');
         return true;
     }
 
@@ -55,7 +65,7 @@ trait DotEnvCommands
      */
     private function hasAutoloadLine($webContent)
     {
-        $autoloadLine = $this->fuzzyArraySearch("require \$basePath . '/vendor/autoload.php'", $webContent);
+        $autoloadLine = $this->fuzzyArraySearch(["require","vendor/autoload.php"], $webContent);
         if ($autoloadLine === false) {
             throw new RunException('Autoload line not found');
         }

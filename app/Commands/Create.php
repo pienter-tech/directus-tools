@@ -20,8 +20,6 @@ class Create extends CommandClass
     /** @var string */
     private $name;
     /** @var bool */
-    private $dotEnv;
-    /** @var bool */
     private $composer;
     /** @var bool */
     private $quiet;
@@ -67,7 +65,6 @@ class Create extends CommandClass
             $this->root = $arguments->get('root') . '/' . $this->name;
         }
 
-        $this->dotEnv = $arguments->get('dotEnv');
         $this->quiet = $arguments->get('quiet');
     }
 
@@ -84,10 +81,6 @@ class Create extends CommandClass
             'description' => 'Project created by directus tools',
             'require' => [],
         ];
-        if ($this->dotEnv) {
-            $this->addDotenv();
-            $customComposerContent['require']['vlucas/phpdotenv'] = '^3.6';
-        }
 
         $this->createCustomComposer($customComposerContent);
         $this->mergeCustomComposer();

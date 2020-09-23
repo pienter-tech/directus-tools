@@ -18,8 +18,6 @@ class Update extends CommandClass
     /** @var string */
     private $root;
     /** @var bool */
-    private $dotEnv;
-    /** @var bool */
     private $composer;
     /** @var bool */
     private $quiet;
@@ -40,7 +38,6 @@ class Update extends CommandClass
     {
         return [
             'root' => Common::getArgument('root'),
-            'dotEnv' => Common::getArgument('dotEnv'),
             'composer' => Common::getArgument('composer'),
             'quiet' => Common::getArgument('quiet'),
         ];
@@ -58,7 +55,6 @@ class Update extends CommandClass
             $this->root = $arguments->get('root');
         }
 
-        $this->dotEnv = $arguments->get('dotEnv');
         $this->composer = $arguments->get('composer');
         $this->quiet = $arguments->get('quiet');
     }
@@ -72,9 +68,6 @@ class Update extends CommandClass
     {
         $this->backupComposer();
         $this->updateDirectus("{$this->root}/upgrade_directus");
-        if ($this->dotEnv) {
-            $this->addDotenv();
-        }
         if ($this->composer) {
             $this->mergeCustomComposer();
         }

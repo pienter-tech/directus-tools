@@ -19,7 +19,7 @@ trait CloneCommands
      * @param bool $firstTime
      * @return bool
      */
-    private function updateDirectus($cloneFolder, $firstTime = false)
+    private function updateDirectus(string $cloneFolder, $firstTime = false)
     {
         $this->cloneFolder = $cloneFolder;
 
@@ -42,15 +42,12 @@ trait CloneCommands
      * @param bool $firstTime
      * @return bool
      */
-    private function clearCloneFolder($firstTime)
+    private function clearCloneFolder(bool $firstTime)
     {
         if ($firstTime || !is_dir($this->cloneFolder)) {
             return false;
         }
-        $removeUpgradeFolder = $this->quiet || $this->cli->confirm("Remove {$this->cloneFolder}?")->confirmed();
-        if (!$removeUpgradeFolder) {
-            return true;
-        }
+
         system("rm -rf {$this->cloneFolder}");
         $this->cli->info("Removed {$this->cloneFolder}");
         return true;
@@ -66,6 +63,8 @@ trait CloneCommands
         system("rm -rf {$this->cloneFolder}/.github/");
         system("rm {$this->cloneFolder}/LICENSE.md");
         system("rm {$this->cloneFolder}/README.md");
+        system("rm {$this->cloneFolder}/SECURITY.md");
+        system("rm {$this->cloneFolder}/CODE_OF_CONDUCT.md");
         if (!$firstTime) {
             system("rm -rf {$this->cloneFolder}/public/uploads/");
             system("rm -rf {$this->cloneFolder}/public/extensions/custom/");

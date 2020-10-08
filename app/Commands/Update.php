@@ -3,7 +3,6 @@
 namespace DirectusTools\Commands;
 
 use DirectusTools\Arguments\Common;
-use DirectusTools\Commands\Helpers\DotEnvCommands;
 use DirectusTools\Commands\Helpers\CloneCommands;
 use DirectusTools\Commands\Helpers\GitIgnoreCommands;
 use DirectusTools\Commands\Helpers\ComposerCommands;
@@ -14,7 +13,7 @@ use League\CLImate\Argument\Manager;
 
 class Update extends CommandClass
 {
-    use DotEnvCommands, ComposerCommands, CloneCommands, GitIgnoreCommands;
+    use ComposerCommands, CloneCommands, GitIgnoreCommands;
     /** @var string */
     private $root;
     /** @var bool */

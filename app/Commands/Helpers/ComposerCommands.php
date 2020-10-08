@@ -99,4 +99,14 @@ trait ComposerCommands
         system("mv {$this->root}/composer.json {$this->root}/composer.bckp.json");
         $this->cli->info('Created composer.bckp.json');
     }
+
+    private function composerInstall()
+    {
+        system("composer install -d '{$this->root}'");
+    }
+
+    private function composerUpdate()
+    {
+        system("composer update -d '{$this->root}'");
+    }
 }

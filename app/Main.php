@@ -6,7 +6,7 @@ use League\CLImate\CLImate;
 
 class Main
 {
-    private $commands = ['Help', 'Update', 'Create'];
+    private $commands = ['Prompt', 'Help', 'Update', 'Create'];
     /** @var CLImate */
     private $cli;
     /** @var string */
@@ -31,6 +31,7 @@ class Main
     {
         foreach ($this->commands as $command) {
             $class = "DirectusTools\\Commands\\$command";
+
             if ($this->cmd === call_user_func("$class::name")) {
                 $command = new $class($this->cli);
                 $command();
@@ -47,7 +48,7 @@ class Main
         $this->cli->arguments->add([
             'command' => [
                 'description' => 'The command you want to execute (create, update)',
-                'defaultValue' => 'update',
+                'defaultValue' => 'prompt',
             ],
         ]);
         foreach ($this->commands as $command) {

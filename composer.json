@@ -12,7 +12,7 @@
     "version": "v1.0.7",
     "minimum-stability": "stable",
     "require": {
-        "league/climate": "^3.5",
+        "league/climate": "^3.6",
         "ext-json": "*"
     },
     "require-dev": {},

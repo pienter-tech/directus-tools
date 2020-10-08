@@ -14,7 +14,7 @@ class Help extends CommandClass
      */
     static function name()
     {
-        return '';
+        return 'help';
     }
 
     /**

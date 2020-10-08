@@ -14,12 +14,6 @@ class Common
             'castTo' => 'string',
             'defaultValue' => '',
         ],
-        'dotEnv' => [
-            'prefix' => 'e',
-            'longPrefix' => 'env',
-            'description' => 'Update web.php file and load Dotenv\Dotenv (add Dotenv\Dorenv to composer.json or composer.custom.json)',
-            'noValue' => true,
-        ],
         'composer' => [
             'prefix' => 'c',
             'longPrefix' => 'composer',
